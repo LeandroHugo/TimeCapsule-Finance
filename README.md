@@ -1,6 +1,6 @@
 # 🚀💼 Time Lock Wallet - Empowering Your Financial Freedom
 
-![An image shows a futuristic wallet with a time lock feature.](Images/time-lock-wallet.png)
+![Alt text](Images/TimeClock.png)
 
 ## 📜 Project Proposal
 
@@ -10,12 +10,12 @@ You work at a fintech startup called FinBlock, dedicated to creating innovative 
 
 ### Project Title 🏆🔐
 
-Time Lock Wallet
+TimeCapsule - A Time Lock Wallet
 
 ### Objective 🎯
 
 The objective of this project is to develop a time lock wallet using Ethereum's Solidity language. The wallet will allow users to deposit funds and set a lock time. The funds cannot be withdrawn until the lock time has elapsed. This can help users save money for specific goals and prevent impulsive spending decisions.
-
+![Alt text](Images/TimeClock1.png)
 ### Scope of Work 🛠️
 
 1. **Learning Phase:** 📚 Understand the basics of Solidity, the programming language used for writing smart contracts on the Ethereum blockchain. Refer to the [Ethereum Developer Resources](https://ethereum.org/developers/) for more information.
@@ -31,7 +31,7 @@ The objective of this project is to develop a time lock wallet using Ethereum's 
 6. **Interaction:** 🤝 Interact with the deployed smart contract using Web3.js. Develop a web-based user interface for the time lock wallet using [Streamlit](https://docs.streamlit.io/en/stable/).
 
 7. **User Interface Development (Optional):** 🌐 Develop a web-based user interface for the time lock wallet to make it more accessible to users.
-
+![Alt text](Images/TimeClock2.png)
 ### Timeline ⏳
 
 The estimated timeline for this project is 6-8 weeks. This includes time for learning, development, testing, and deployment.
@@ -39,15 +39,16 @@ The estimated timeline for this project is 6-8 weeks. This includes time for lea
 ### Budget 💰
 
 The budget will primarily cover the cost of deploying the smart contract to the Ethereum blockchain, which involves gas fees. Additional costs may include security audits and the development of a user interface.
-
+![Alt text](Images/Slash.png)
 ### Expected Outcomes 🏁
 
 At the end of this project, we will have a functioning time lock wallet that users can interact with to deposit funds, set a lock time, and withdraw funds after the lock time has elapsed. This will provide a tool for users to manage their spending and save money for specific goals.
-
+![Alt text](Images/Slash1.png)
 ### Future Work 🔮
 
 Future enhancements could include adding additional features to the wallet, such as the ability to add multiple time locks or to lock different types of assets. We could also develop a mobile app interface for the wallet to make it even more accessible.
 
+![Alt text](Images/Future.png)
 ---
 
 ## Ethereum Reference and Exploratory Material
@@ -103,7 +104,7 @@ Future enhancements could include adding additional features to the wallet, such
 **7. User Interface Development (Optional):**
 - If feasible, create a web-based user interface to enhance accessibility.
 - Consider user experience and design elements for a smooth and intuitive user journey.
-
+![Alt text](Images/Future1.png)
 ---
 
 ⚡️ Let's embark on this exciting journey and build the Time Lock Wallet to empower users in achieving their financial goals! Together, we'll revolutionize the fintech industry! 💼💰💪🚀
