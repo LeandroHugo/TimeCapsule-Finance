@@ -45,3 +45,15 @@ contract TimeLockWallet {
         deposit();
     }
 }
+
+// In this version, the deposit function no longer takes an amount argument.
+// Instead, it uses the msg.value directly from the transaction, which is the usual way to handle deposits in Solidity.
+
+// The withdraw function now only withdraws the entire balance of the contract and resets the balance to zero.
+// Also, the lockTime comparison has been changed to >= to allow for withdrawal exactly at lockTime.
+
+// I've made the deadmanSwitch function reset the lockTime to zero, allowing immediate withdrawal.
+// This is just an example, you should replace it with your desired functionality.
+
+// Lastly, the fallback function now calls the deposit function,
+// meaning any Ether sent to the contract without data will be treated as a deposit.
