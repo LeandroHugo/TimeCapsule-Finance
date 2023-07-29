@@ -32,14 +32,13 @@ The objective of this project is to develop a time lock wallet using Ethereum's 
 
 7. **User Interface Development :** 🌐 Develop a web-based user interface for the time lock wallet to make it more accessible to users.
 
-8. **Machine learning :** 🌐 We will use APIs to get last 1 year ethereum price and use that to forecast value in the next 10 days. When user tries to withdraw funds, we will show potential price drop or increase and ask if withdraw should continue to happen. 
+8. **Machine learning :** 🌐 We will use APIs to get last 1 year ethereum price and use that to forecast value in the next 10 days. When user tries to withdraw funds, we will show potential price drop or increase and ask if withdraw should continue to happen.
 
 9. **Interest Rate :** We can add an interest rate to the deposited amount. The longer the funds stay in the wallet, the more interest they accrue.
 10. **Multi-signature Wallet :** We can turn this into a multi-signature wallet, where multiple parties need to agree before funds can be withdrawn.
 11. **Emergency Stop :** We can add a "circuit breaker" or "pause" function that allows the owner to stop certain functionalities in case of an emergency.
 12. **Withdrawal Limit :** We can add a daily withdrawal limit to prevent all funds from being withdrawn at once.
 13. **Token Support :** We can add support for ERC20 tokens in addition to Ether.
-
 
 ### Timeline ⏳
 

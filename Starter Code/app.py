@@ -10,7 +10,7 @@ web3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 ABI = []
 
 # The contract address that you get after deploying your smart contract
-contract_address = '0xb2A62eF1221A1527364C7C451E3F21622C3dAEcE'
+contract_address = '0x3F04bB7a6f01c94fAc0F33A796915eAc4E923e7F'
 
 # Creating contract instance
 contract = web3.eth.contract(address=contract_address, abi=ABI)
