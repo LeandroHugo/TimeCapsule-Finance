@@ -2,14 +2,16 @@ pragma solidity ^0.5.0;
 
 contract TimeLockWallet {
     address payable public owner;
+    uint balance;
     uint public lockTime;
 
     constructor() public {
         owner = msg.sender;
     }
 
-    function deposit() public payable {
+    function deposit(uint amount) public payable {
         require(msg.value > 0, "Must send some ether");
+        balance = address(this).balance;
     }
 
     function setLockTime(uint _lockTime) public {
@@ -18,7 +20,7 @@ contract TimeLockWallet {
         lockTime = _lockTime;
     }
 
-    function withdraw() public {
+    function withdraw(uint amount) public {
         require(msg.sender == owner, "Only the owner can withdraw");
         require(now > lockTime, "Wallet is locked");
 
@@ -27,7 +29,10 @@ contract TimeLockWallet {
         require(success, "Transfer failed.");
     }
 
+    function deadmanSwitch() public {
+        require()
+    }
+
     function() external payable {
-        deposit();
     }
 }

@@ -6,7 +6,7 @@
 
 ### Background 🌌🔍
 
-You work at a fintech startup called FinBlock, dedicated to creating innovative blockchain solutions for financial empowerment. In a world of impulsive spending and financial stress, FinBlock aims to provide a revolutionary tool to help users take control of their finances and achieve their savings goals.
+In a world of impulsive spending and financial stress, we need a revolutionary tool to help users take control of their finances and achieve their savings goals. Whether the users are governed by certain set of policies by bank or by guardians of the accounts (Ex: Parents taking ownership of minor accounts) we want to provide an option for locking the wallet for certain period of time.
 
 ### Project Title 🏆🔐
 
@@ -30,20 +30,30 @@ The objective of this project is to develop a time lock wallet using Ethereum's 
 
 6. **Interaction:** 🤝 Interact with the deployed smart contract using Web3.js. Develop a web-based user interface for the time lock wallet using [Streamlit](https://docs.streamlit.io/en/stable/).
 
-7. **User Interface Development (Optional):** 🌐 Develop a web-based user interface for the time lock wallet to make it more accessible to users.
-![Alt text](Images/TimeClock2.png)
+7. **User Interface Development :** 🌐 Develop a web-based user interface for the time lock wallet to make it more accessible to users.
+
+8. **Machine learning :** 🌐 We will use APIs to get last 1 year ethereum price and use that to forecast value in the next 10 days. When user tries to withdraw funds, we will show potential price drop or increase and ask if withdraw should continue to happen.
+
+9. **Interest Rate :** We can add an interest rate to the deposited amount. The longer the funds stay in the wallet, the more interest they accrue.
+10. **Multi-signature Wallet :** We can turn this into a multi-signature wallet, where multiple parties need to agree before funds can be withdrawn.
+11. **Emergency Stop :** We can add a "circuit breaker" or "pause" function that allows the owner to stop certain functionalities in case of an emergency.
+12. **Withdrawal Limit :** We can add a daily withdrawal limit to prevent all funds from being withdrawn at once.
+13. **Token Support :** We can add support for ERC20 tokens in addition to Ether.
+
 ### Timeline ⏳
 
-The estimated timeline for this project is 6-8 weeks. This includes time for learning, development, testing, and deployment.
+The estimated timeline for this project is 6-8 weeks but we only have 2 weeks to get this done. This includes time for learning, development, testing, and deployment.
 
 ### Budget 💰
 
-The budget will primarily cover the cost of deploying the smart contract to the Ethereum blockchain, which involves gas fees. Additional costs may include security audits and the development of a user interface.
+The budget will primarily cover the cost of deploying the smart contract to the Ethereum blockchain, which involves gas fees. 
+
 ![Alt text](Images/Slash.png)
 ### Expected Outcomes 🏁
 
 At the end of this project, we will have a functioning time lock wallet that users can interact with to deposit funds, set a lock time, and withdraw funds after the lock time has elapsed. This will provide a tool for users to manage their spending and save money for specific goals.
 ![Alt text](Images/Slash1.png)
+
 ### Future Work 🔮
 
 Future enhancements could include adding additional features to the wallet, such as the ability to add multiple time locks or to lock different types of assets. We could also develop a mobile app interface for the wallet to make it even more accessible.
