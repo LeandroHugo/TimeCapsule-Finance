@@ -1,5 +1,6 @@
 import streamlit as st
 from web3 import Web3
+import json
 
 # Use Ganache for local blockchain development
 GANACHE_URL = 'HTTP://127.0.0.1:7545'
@@ -7,7 +8,41 @@ web3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 
 # This should be the contract ABI (Application Binary Interface), which you get after compiling your smart contract
 # For simplicity, let's use an empty list
-ABI = []
+ABI = [
+    {
+        "inputs": [],
+        "payable": False,
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+    },
+    {
+        "anonymous": False,
+        "inputs": [
+            {
+                "indexed": False,
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "indexed": False,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "indexed": False,
+                "internalType": "uint256",
+                "name": "balance",
+                "type": "uint256"
+            }
+        ],
+        "name": "Deposited",
+        "type": "event"
+    },
+    # ...
+]
+
 
 # The contract address that you get after deploying your smart contract
 contract_address = '0x3F04bB7a6f01c94fAc0F33A796915eAc4E923e7F'
