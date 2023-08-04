@@ -261,13 +261,30 @@ if owner == web3.eth.accounts[0]:
         st.success(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
         st.balloons()
 
-    # Set lock time
-    if st.button('Set Lock Time'):
-        lock_time = st.number_input('Enter lock time in seconds', step=1)
-        tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
-        st.balloons()
+# Set lock time
+lock_time = st.number_input('Enter lock time', step=1)
+time_unit = st.selectbox('Select time unit', ['Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'])
+
+# Convert the lock time to seconds based on the selected time unit
+if time_unit == 'Minutes':
+    lock_time *= 60
+elif time_unit == 'Hours':
+    lock_time *= 60 * 60
+elif time_unit == 'Days':
+    lock_time *= 60 * 60 * 24
+elif time_unit == 'Weeks':
+    lock_time *= 60 * 60 * 24 * 7
+elif time_unit == 'Months':
+    lock_time *= 60 * 60 * 24 * 30
+elif time_unit == 'Years':
+    lock_time *= 60 * 60 * 24 * 365
+
+if st.button('Set Lock Time'):
+    tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})
+    receipt = web3.eth.waitForTransactionReceipt(tx_hash)
+    st.success(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
+    st.balloons()
+
 
 # Withdraw
 withdraw_amount = st.text_input('Enter withdrawal amount:')
