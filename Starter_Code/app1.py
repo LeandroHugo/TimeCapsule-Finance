@@ -242,7 +242,6 @@ contract_address = '0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1'
 # Creating contract instance
 contract = web3.eth.contract(address=contract_address, abi=ABI)
 
-# Streamlit App
 st.title('TimeLock Wallet')
 
 # Set owner of the contract
@@ -253,17 +252,17 @@ if owner == web3.eth.accounts[0]:
     st.header('Welcome Owner')
 
     # Deposit
-    deposit_amount = st.text_input('Enter deposit amount:')
+    deposit_amount = st.slider('Select deposit amount:', min_value=0.0, max_value=10.0, step=0.1)
     deposit_message = st.text_input('Enter a message for the deposit:')
     if st.button('Deposit'):
-        tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(float(deposit_amount), 'ether')})
+        tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
         st.success(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
         st.balloons()
 
     # Set lock time
     lock_time = st.number_input('Enter lock time', step=1)
-    time_unit = st.selectbox('Select time unit', ['Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'])
+    time_unit = st.radio('Select lock time unit:', ('Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'))
 
     # Convert the lock time to seconds based on the selected time unit
     if time_unit == 'Minutes':
@@ -286,15 +285,16 @@ if owner == web3.eth.accounts[0]:
         st.balloons()
 
     # Withdraw
-    withdraw_amount = st.text_input('Enter withdrawal amount:')
+    withdraw_amount = st.slider('Select withdrawal amount:', min_value=0.0, max_value=10.0, step=0.1)
     if st.button('Withdraw'):
-        tx_hash = contract.functions.withdraw(web3.toWei(float(withdraw_amount), 'ether')).transact({'from': owner})
+        tx_hash = contract.functions.withdraw(web3.toWei(withdraw_amount, 'ether')).transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
         st.success(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
         st.balloons()
 
 # Deadman Switch
-if st.button('Activate Deadman Switch'):
+use_deadman_switch = st.checkbox('Activate Deadman Switch')
+if use_deadman_switch:
     new_owner = st.text_input("Enter new owner address")
     if Web3.isAddress(new_owner):  # Check if the address is valid
         tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})
