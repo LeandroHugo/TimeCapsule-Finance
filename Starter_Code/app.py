@@ -196,23 +196,27 @@ if owner == web3.eth.accounts[0]:
     st.header('Welcome Owner')
 
     # Deposit
+    deposit_amount = st.text_input('Enter deposit amount:')
     if st.button('Deposit'):
-        tx_hash = contract.functions.deposit().transact({'from': owner, 'value': web3.toWei(1, 'ether')})
+        tx_hash = contract.functions.deposit().transact({'from': owner, 'value': web3.toWei(float(deposit_amount), 'ether')})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.write(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.success(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
 
     # Set lock time
     if st.button('Set Lock Time'):
         lock_time = st.number_input('Enter lock time in seconds', step=1)
         tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.write(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.success(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
 
     # Withdraw
     if st.button('Withdraw'):
         tx_hash = contract.functions.withdraw().transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.write(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.success(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
 
 # Deadman Switch
 if st.button('Activate Deadman Switch'):
@@ -220,6 +224,7 @@ if st.button('Activate Deadman Switch'):
     if Web3.isAddress(new_owner):  # Check if the address is valid
         tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.write(f"Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.success(f"Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
     else:
-        st.write("The address entered is not valid. Please enter a valid Ethereum address.")
+        st.error("The address entered is not valid. Please enter a valid Ethereum address.")
