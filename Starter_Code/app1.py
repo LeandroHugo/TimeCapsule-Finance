@@ -235,17 +235,17 @@ ABI = [
 	}
 ]
 
-
 # The contract address that you get after deploying your smart contract
 contract_address = '0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1'
 
 # Creating contract instance
 contract = web3.eth.contract(address=contract_address, abi=ABI)
 
+# st.sidebar.image('Starter_Code/sidebar.png')  # Add this line to display your logo in the sidebar
 st.title('TimeLock Wallet')
 
 # Set owner of the contract
-owner = st.sidebar.text_input("Owner Address", value="0xYourAddress")
+owner = st.sidebar.text_input("Owner Unique Address", value="0x-YourAddress")
 
 # If contract owner, show options
 if owner == web3.eth.accounts[0]:
