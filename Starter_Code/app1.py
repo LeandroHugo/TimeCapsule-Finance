@@ -1,6 +1,5 @@
 import streamlit as st
 from web3 import Web3
-import json
 
 # Use Ganache for local blockchain development
 GANACHE_URL = 'HTTP://127.0.0.1:7545'
@@ -8,44 +7,10 @@ web3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 
 # This should be the contract ABI (Application Binary Interface), which you get after compiling your smart contract
 # For simplicity, let's use an empty list
-ABI = [
-    {
-        "inputs": [],
-        "payable": False,
-        "stateMutability": "nonpayable",
-        "type": "constructor"
-    },
-    {
-        "anonymous": False,
-        "inputs": [
-            {
-                "indexed": False,
-                "internalType": "address",
-                "name": "from",
-                "type": "address"
-            },
-            {
-                "indexed": False,
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            },
-            {
-                "indexed": False,
-                "internalType": "uint256",
-                "name": "balance",
-                "type": "uint256"
-            }
-        ],
-        "name": "Deposited",
-        "type": "event"
-    },
-    # ...
-]
-
+ABI = []
 
 # The contract address that you get after deploying your smart contract
-contract_address = '0x3F04bB7a6f01c94fAc0F33A796915eAc4E923e7F'
+contract_address = '0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1'
 
 # Creating contract instance
 contract = web3.eth.contract(address=contract_address, abi=ABI)
@@ -78,5 +43,13 @@ if owner == web3.eth.accounts[0]:
         tx_hash = contract.functions.withdraw().transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
         st.write(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
+
+    # Deadman Switch
+    if st.button('Activate Deadman Switch'):
+        new_owner = st.text_input("Enter new owner address")
+        tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
+        st.write(f"Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")
+
 else:
     st.write("You are not the owner of this contract.")
