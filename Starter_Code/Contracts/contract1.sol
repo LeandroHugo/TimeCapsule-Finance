@@ -7,8 +7,8 @@ contract TimeLockWallet {
     uint public balance;
     uint public lockTime;
 
-    event Deposited(address from, uint amount, uint balance, string message);
-    event Withdrawn(address to, uint amount, uint balance);
+    event Deposited(address indexed from, uint amount, uint balance, string message);
+    event Withdrawn(address indexed to, uint amount, uint balance);
     event LockTimeUpdated(uint newLockTime);
 
     constructor() public {
@@ -40,15 +40,15 @@ contract TimeLockWallet {
         emit LockTimeUpdated(_lockTime);
     }
 
-function withdraw(uint amount) public {
-    require(msg.sender == owner, "Only the owner can withdraw");
-    require(now >= lockTime, "Wallet is locked");
-    require(amount <= balance, "Insufficient balance");
+    function withdraw(uint amount) public {
+        require(msg.sender == owner, "Only the owner can withdraw");
+        require(now >= lockTime, "Wallet is locked");
+        require(amount <= balance, "Insufficient balance");
 
-    balance -= amount;
-    owner.transfer(amount);
-    emit Withdrawn(owner, amount, balance);
-}
+        balance -= amount;
+        owner.transfer(amount);
+        emit Withdrawn(owner, amount, balance);
+    }
 
     function deadmanSwitch(address payable newOwner) public {
         // Allow the owner to transfer ownership to a backup owner
