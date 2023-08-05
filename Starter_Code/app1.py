@@ -246,11 +246,54 @@ st.sidebar.image('sidebar.png')  # Add this line to display your logo in the sid
 st.title('⏳ TimeLock Wallet')  # 🏦
 
 # 🕵️‍♂️ Contract Owner
-owner = st.sidebar.text_input("👤 OWNER WALLET ADDRESS", value="0xYourAddress")  # 🔑
+owner = st.sidebar.text_input("👤 OWNER WALLET ADDRESS", value="0x-YourAddress")  # 🔑
 
-# Owner's Panel
-if owner == web3.eth.accounts[0]:
-    st.header('👋 Welcome Owner')
+# User Role
+user_role = st.sidebar.selectbox('👥 Role', ['Admin', 'User'])  # 🧑‍💼
+
+# 🧑‍💼 Admin Panel
+if user_role == 'Admin' and owner == web3.eth.accounts[0]:
+    st.header('👋 Welcome Admin')
+
+    # Set New Admin
+    new_admin = st.text_input("🔄 Enter new admin address")  # 🔄
+    if Web3.isAddress(new_admin):  # ✅
+        tx_hash = contract.functions.setAdmin(new_admin).transact({'from': owner})  # 👑
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+        st.success(f"🔄 New admin set. New admin is {new_admin}. Transaction hash: {receipt['transactionHash'].hex()}")  # 🎉
+        # st.audio('new_admin_set.mp3')  # 🎵 Play success sound
+        st.balloons()  # 🎈🎈
+
+    # ⏳ Set Lock Time
+    lock_time = st.number_input('⏲️ Enter lock time', step=1)  # ⏱️
+    time_unit = st.radio('⌚ Select lock time unit:', ('Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'))  # 🔄
+
+    # Convert lock time to seconds
+    # ....
+
+    if st.button('🔒 Set Lock Time'):
+        tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})  # 🔐
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+        st.success(f"⌛ Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+        # st.audio('lock_time_set.mp3')  # 🎵 Play success sound
+        st.balloons()  # 🎈🎈
+
+    # 💀 Deadman Switch
+    use_deadman_switch = st.checkbox('💀 Activate Deadman Switch')  # ☑️
+    if use_deadman_switch:
+        new_owner = st.text_input("🔄 Enter new owner address")  # 🔄
+        if Web3.isAddress(new_owner):  # ✅
+            tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})  # 💀
+            receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+            st.success(f"🔄 Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")  # 🎉
+            # st.audio('switch_activated.mp3')  # 🎵 Play success sound
+            st.balloons()  # 🎈🎈
+
+    # Other admin operations here
+
+# 👥 User's Panel
+elif user_role == 'User':
+    st.header('👋 Welcome User')
 
     # 💰 Deposit
     deposit_amount = st.slider('💲 Select deposit amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
@@ -259,32 +302,7 @@ if owner == web3.eth.accounts[0]:
         tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})  # 📨
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
         st.success(f"💵 Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
-        st.audio('depositsuccessful.mp3') # 🎵 Play success sound
-        st.balloons()  # 🎈🎈🎈
-
-    # ⏳ Set Lock Time
-    lock_time = st.number_input('⏲️ Enter lock time', step=1)  # ⏱️
-    time_unit = st.radio('⌚ Select lock time unit:', ('Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'))  # 🔄
-#     time_unit = st.selectbox('Select time unit', ['Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'])
-
-    # Convert the lock time to seconds based on the selected time unit
-    if time_unit == 'Minutes':
-        lock_time *= 60
-    elif time_unit == 'Hours':
-        lock_time *= 60 * 60
-    elif time_unit == 'Days':
-        lock_time *= 60 * 60 * 24
-    elif time_unit == 'Weeks':
-        lock_time *= 60 * 60 * 24 * 7
-    elif time_unit == 'Months':
-        lock_time *= 60 * 60 * 24 * 30
-    elif time_unit == 'Years':
-        lock_time *= 60 * 60 * 24 * 365
-
-    if st.button('🔒 Set Lock Time'):
-        tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})  # 🔐
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
-        st.success(f"⌛ Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+        # st.audio('deposit_success.mp3')  # 🎵 Play success sound
         st.balloons()  # 🎈🎈
 
     # 💵 Withdraw
@@ -293,19 +311,10 @@ if owner == web3.eth.accounts[0]:
         tx_hash = contract.functions.withdraw(web3.toWei(withdraw_amount, 'ether')).transact({'from': owner})  # 📤
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
         st.success(f"🏧 Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+        # st.audio('withdraw_success.mp3')  # 🎵 Play success sound
         st.balloons()  # 🎈🎈
+
+    # User operations here
 
 # ⚠️ Withdrawal Warning
 st.warning("⚠️ Please be aware that withdrawal transactions may be subject to fees.")  # 💸
-
-# 💀 Deadman Switch
-use_deadman_switch = st.checkbox('💀 Activate Deadman Switch')  # ☑️
-if use_deadman_switch:
-    new_owner = st.text_input("🔄 Enter new owner address")  # 🔄
-    if Web3.isAddress(new_owner):  # ✅
-        tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})  # 💀
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
-        st.success(f"🔄 Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")  # 🎉
-        st.balloons()  # 🎈🎈
-    else:
-        st.error("❌ The address entered is not valid. Please enter a valid Ethereum address.")  # 🚫
