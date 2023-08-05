@@ -292,6 +292,7 @@ if owner == web3.eth.accounts[0]:
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
         st.success(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
         st.balloons()
+st.warning("Please be aware that withdrawal transactions may be subject to fees.")
 
 # Deadman Switch
 use_deadman_switch = st.checkbox('Activate Deadman Switch')
