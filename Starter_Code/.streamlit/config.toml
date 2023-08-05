@@ -1,4 +1,4 @@
 [theme]
-base="dark"
-primaryColor="purple"
+base="light"
+primaryColor="#ff6347"  # Tomato color
 font="serif"

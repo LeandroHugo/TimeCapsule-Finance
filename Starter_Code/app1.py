@@ -245,11 +245,16 @@ st.sidebar.image('sidebar.png')  # Add this line to display your logo in the sid
 # 🎈🖼️ Streamlit App
 st.title('⏳ TimeLock Wallet')  # 🏦
 
-# 🕵️‍♂️ Contract Owner
-owner = st.sidebar.text_input("👤 OWNER WALLET ADDRESS", value="0x-YourAddress")  # 🔑
+# Sidebar Content 📝
+with st.sidebar:
+    st.header("🔧 Controls")
+    st.write("Use the controls below to interact with the contract.")
 
-# User Role
-user_role = st.sidebar.selectbox('👥 Role', ['Admin', 'User'])  # 🧑‍💼
+    # 🕵️‍♂️ Contract Owner
+    owner = st.text_input("👤 OWNER WALLET ADDRESS", value="0x-YourAddress")  # 🔑
+
+    # User Role
+    user_role = st.selectbox('👥 Role', ['Admin', 'User'])  # 🧑‍💼
 
 # 🧑‍💼 Admin Panel
 if user_role == 'Admin' and owner == web3.eth.accounts[0]:
