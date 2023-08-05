@@ -263,6 +263,7 @@ if owner == web3.eth.accounts[0]:
     # Set lock time
     lock_time = st.number_input('Enter lock time', step=1)
     time_unit = st.radio('Select lock time unit:', ('Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'))
+#     time_unit = st.selectbox('Select time unit', ['Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'])
 
     # Convert the lock time to seconds based on the selected time unit
     if time_unit == 'Minutes':
