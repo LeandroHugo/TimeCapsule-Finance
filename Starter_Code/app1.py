@@ -65,6 +65,37 @@ ABI = [
 			{
 				"indexed": True,
 				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": True,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"name": "Transfer",
+		"type": "event"
+	},
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": True,
+				"internalType": "address",
 				"name": "to",
 				"type": "address"
 			},
@@ -222,6 +253,26 @@ ABI = [
 		"constant": False,
 		"inputs": [
 			{
+				"internalType": "address payable",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [],
+		"payable": False,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": False,
+		"inputs": [
+			{
 				"internalType": "uint256",
 				"name": "amount",
 				"type": "uint256"
@@ -300,24 +351,41 @@ if user_role == 'Admin' and owner == web3.eth.accounts[0]:
 elif user_role == 'User':
     st.header('👋 Welcome User')
 
-    # 💰 Deposit
-    deposit_amount = st.slider('💲 Select deposit amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
-    deposit_message = st.text_input('💌 Enter a message for the deposit:')  # 💬
-    if st.button('💸 Deposit'):
-        tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})  # 📨
+    # Creating columns for Deposit and Withdraw operations
+    col1, col2 = st.columns(2)
+
+    with col1:
+        # 💰 Deposit
+        deposit_amount = st.slider('💲 Select deposit amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
+        deposit_message = st.text_input('💌 Enter a message for the deposit:')  # 💬
+        if st.button('💸 Deposit'):
+            tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})  # 📨
+            receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+            st.success(f"💵 Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+            # st.audio('deposit_success.mp3')  # 🎵 Play success sound
+            st.balloons()  # 🎈🎈
+
+    with col2:
+        # 💵 Withdraw
+        withdraw_amount = st.slider('💰 Select withdrawal amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
+        if st.button('💵 Withdraw'):
+            tx_hash = contract.functions.withdraw(web3.toWei(withdraw_amount, 'ether')).transact({'from': owner})  # 📤
+            receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+            st.success(f"🏧 Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+            # st.audio('withdraw_success.mp3')  # 🎵 Play success sound
+            st.balloons()  # 🎈🎈
+
+# Transfer Funds
+    recipient_address = st.text_input("🎯 Recipient Address", value="0x-RecipientAddress")  # 📬
+    transfer_amount = st.slider('💰 Select transfer amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
+    if st.button('💸 Transfer'):
+        tx_hash = contract.functions.transfer(recipient_address, web3.toWei(transfer_amount, 'ether')).transact({'from': owner})  # 📤
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
-        st.success(f"💵 Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
-        # st.audio('deposit_success.mp3')  # 🎵 Play success sound
+        st.success(f"💵 Transfer successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+        # st.audio('transfer_success.mp3')  # 🎵 Play success sound
         st.balloons()  # 🎈🎈
 
-    # 💵 Withdraw
-    withdraw_amount = st.slider('💰 Select withdrawal amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
-    if st.button('💵 Withdraw'):
-        tx_hash = contract.functions.withdraw(web3.toWei(withdraw_amount, 'ether')).transact({'from': owner})  # 📤
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
-        st.success(f"🏧 Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
-        # st.audio('withdraw_success.mp3')  # 🎵 Play success sound
-        st.balloons()  # 🎈🎈
+    st.header('👋 Goodbye User')
 
     # User operations here
 
