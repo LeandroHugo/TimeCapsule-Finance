@@ -259,7 +259,8 @@ if owner == web3.eth.accounts[0]:
         tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})  # 📨
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
         st.success(f"💵 Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
-        st.balloons()  # 🎈🎈
+        st.audio('depositsuccessful.mp3') # 🎵 Play success sound
+        st.balloons()  # 🎈🎈🎈
 
     # ⏳ Set Lock Time
     lock_time = st.number_input('⏲️ Enter lock time', step=1)  # ⏱️
