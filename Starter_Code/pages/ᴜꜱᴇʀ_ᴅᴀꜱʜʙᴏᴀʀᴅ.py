@@ -23,7 +23,7 @@ def run():
 
     if wallet_address:  # If logged in
         st.sidebar.image(USER_DATA["profile_pic"], caption='Profile Picture', width=150)
-        
+
         uploaded_file = st.sidebar.file_uploader("Upload/Change Profile Picture", type=["jpg", "jpeg", "png"])
         if uploaded_file:
             st.sidebar.image(uploaded_file, caption='Uploaded Image.', width=150)
