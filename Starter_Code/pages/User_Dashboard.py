@@ -1,35 +1,81 @@
 import streamlit as st
+import time
 
 # Dummy data for the sake of this example
 USER_DATA = {
     "name": "John Doe",
-    "wallet_address": "0xabc123...",
-    "balance": 100.5
+    "wallet_address": "0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1",
+    "balance": 100.5,
+    "profile_pic": "https://www.w3schools.com/howto/img_avatar.png"
 }
+
+def validate_wallet(wallet_address):
+    return wallet_address == USER_DATA["wallet_address"]
 
 def run():
     st.title('👤 User Dashboard')
 
-    # Profile Section
-    st.subheader('Profile')
+    # Sidebar for user profile
+    st.sidebar.header("User Profile 📸")
 
-    # Load and display the profile picture
-    uploaded_file = st.file_uploader("Upload/Change Profile Picture", type=["jpg", "jpeg", "png"])
-    if uploaded_file:
-        st.image(uploaded_file, caption='Uploaded Image.', use_column_width=True)
+    # Attempt to retrieve the wallet address from session_state
+    wallet_address = st.session_state.get("wallet_address", "")
+
+    if wallet_address:  # If logged in
+        st.sidebar.image(USER_DATA["profile_pic"], caption='Profile Picture', width=150)
+        
+        uploaded_file = st.sidebar.file_uploader("Upload/Change Profile Picture", type=["jpg", "jpeg", "png"])
+        if uploaded_file:
+            st.sidebar.image(uploaded_file, caption='Uploaded Image.', width=150)
+        else:
+            st.sidebar.image("https://www.w3schools.com/howto/img_avatar.png", caption='Default Profile Picture.', width=150)
+
+        st.sidebar.write(f"**Name:** {USER_DATA['name']}")
+        st.sidebar.write(f"**Wallet Address:** {USER_DATA['wallet_address']}")
+        st.sidebar.write(f"**Balance:** {USER_DATA['balance']} ETH 💰")
+
+        # Fun features:
+        col1, col2, col3 = st.columns([1, 2, 1])
+        col1.markdown("### Welcome to my app!")
+        col1.write("Here is some info on the app.")
+
+        def change_photo_state():
+            st.session_state["photo"] = "done"
+
+        if "photo" not in st.session_state:
+            st.session_state["photo"] = "not done"
+
+        uploaded_photo = col2.file_uploader("Upload a photo", on_change=change_photo_state)
+        camera_photo = col2.camera_input("Take a photo", on_change=change_photo_state)
+
+        if st.session_state["photo"] == "done":
+            progress_bar = col2.progress(0)
+            for perc_completed in range(100):
+                time.sleep(0.05)
+                progress_bar.progress(perc_completed + 1)
+            col2.success("Photo uploaded successfully!")
+
+        col3.metric(label="Temperature", value="60 °C", delta="3 °C")
+
+        with st.expander("Click to read more"):
+            st.write("Hello, here are more details on this topic that you were interested in.")
+
+        if uploaded_photo is not None:
+            st.image(uploaded_photo)
+        elif camera_photo is not None:
+            st.image(camera_photo)
+
+        if st.sidebar.button("Logout"):
+            del st.session_state["wallet_address"]
+
     else:
-        st.image("https://www.w3schools.com/howto/img_avatar.png", caption='Default Profile Picture.', use_column_width=True)
-
-    st.write(f"**Name:** {USER_DATA['name']}")
-    st.write(f"**Wallet Address:** {USER_DATA['wallet_address']}")
-    st.write(f"**Balance:** {USER_DATA['balance']} ETH")
-
-    # File Upload
-    st.subheader('Upload Documents')
-    uploaded_docs = st.file_uploader("Choose a file", type=["pdf", "doc", "txt", "docx"])
-    if uploaded_docs:
-        for doc in uploaded_docs:
-            st.write(f"Uploaded {doc.name}")
+        input_wallet_address = st.sidebar.text_input("Enter Wallet Address 🔒")
+        if st.sidebar.button("Login"):
+            if validate_wallet(input_wallet_address):
+                st.session_state["wallet_address"] = input_wallet_address
+                st.sidebar.success("Logged in successfully! ✅")
+            else:
+                st.sidebar.error("Invalid wallet address! ❌")
 
     # Tips & Best Practices
     st.subheader('Tips & Best Practices')
