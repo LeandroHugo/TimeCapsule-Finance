@@ -296,6 +296,9 @@ st.sidebar.image('sidebar.png')  # Add this line to display your logo in the sid
 # 🎈🖼️ Streamlit App
 st.title('⏳ TimeLock Wallet')  # 🏦
 
+# Display image
+st.image('user1.png', caption='YOU ARE IN CONTROL', use_column_width=True)
+
 # Sidebar Content 📝
 with st.sidebar:
     st.header("🔧 Controls")
@@ -309,7 +312,13 @@ with st.sidebar:
 
 # 🧑‍💼 Admin Panel
 if user_role == 'Admin' and owner == web3.eth.accounts[0]:
-    st.header('👋 Welcome Admin')
+    st.title('👋 Welcome Admin to the Time Capsule Control Center!')  # 🎈
+    st.header(' Admin Panel')  # 🧑‍💼
+    st.markdown("""
+    As an Admin, you have special privileges and responsibilities. You can set lock times, assign new admins, 
+    and manage other important aspects of the TimeLock Wallet. Remember, with great power comes great responsibility. 
+    Please ensure that all actions you take are in the best interests of the wallet's users.
+    """)
 
     # Set New Admin
     new_admin = st.text_input("🔄 Enter new admin address")  # 🔄
@@ -350,6 +359,11 @@ if user_role == 'Admin' and owner == web3.eth.accounts[0]:
 # 👥 User's Panel
 elif user_role == 'User':
     st.header('👋 Welcome User')
+    st.markdown("""
+TimeLock Wallet is a secure and innovative solution for storing and managing your cryptocurrency assets. 
+With TimeLock Wallet, you can deposit, withdraw, and transfer funds with confidence, knowing your assets 
+are securely locked and only accessible by you. Enjoy your stay!
+""")
 
     # Creating columns for Deposit and Withdraw operations
     col1, col2 = st.columns(2)
@@ -386,7 +400,11 @@ elif user_role == 'User':
         st.balloons()  # 🎈🎈
 
     st.header('👋 Goodbye User')
-
+    st.markdown("""
+Thanks for using the TimeLock Wallet! We hope you had a great experience. 
+Remember, your transactions are safe and secured. 
+Looking forward to seeing you again soon!
+""")
     # User operations here
 
 # ⚠️ Withdrawal Warning
