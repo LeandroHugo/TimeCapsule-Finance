@@ -242,27 +242,28 @@ contract_address = '0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1'
 contract = web3.eth.contract(address=contract_address, abi=ABI)
 
 # st.sidebar.image('Starter_Code/sidebar.png')  # Add this line to display your logo in the sidebar
-st.title('TimeLock Wallet')
+# 🎈🖼️ Streamlit App
+st.title('⏳ TimeLock Wallet')  # 🏦
 
-# Set owner of the contract
-owner = st.sidebar.text_input("Owner Unique Address", value="0x-YourAddress")
+# 🕵️‍♂️ Contract Owner
+owner = st.sidebar.text_input("👤 Owner Unique Address", value="0x-YourAddress")  # 🔑
 
-# If contract owner, show options
+# Owner's Panel
 if owner == web3.eth.accounts[0]:
-    st.header('Welcome Owner')
+    st.header('👋 Welcome Owner')
 
-    # Deposit
-    deposit_amount = st.slider('Select deposit amount:', min_value=0.0, max_value=100.0, step=0.1)
-    deposit_message = st.text_input('Enter a message for the deposit:')
-    if st.button('Deposit'):
-        tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
-        st.balloons()
+    # 💰 Deposit
+    deposit_amount = st.slider('💲 Select deposit amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
+    deposit_message = st.text_input('💌 Enter a message for the deposit:')  # 💬
+    if st.button('💸 Deposit'):
+        tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})  # 📨
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+        st.success(f"💵 Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+        st.balloons()  # 🎈🎈
 
-    # Set lock time
-    lock_time = st.number_input('Enter lock time', step=1)
-    time_unit = st.radio('Select lock time unit:', ('Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'))
+    # ⏳ Set Lock Time
+    lock_time = st.number_input('⏲️ Enter lock time', step=1)  # ⏱️
+    time_unit = st.radio('⌚ Select lock time unit:', ('Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'))  # 🔄
 #     time_unit = st.selectbox('Select time unit', ['Seconds', 'Minutes', 'Hours', 'Days', 'Weeks', 'Months', 'Years'])
 
     # Convert the lock time to seconds based on the selected time unit
@@ -279,29 +280,31 @@ if owner == web3.eth.accounts[0]:
     elif time_unit == 'Years':
         lock_time *= 60 * 60 * 24 * 365
 
-    if st.button('Set Lock Time'):
-        tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
-        st.balloons()
+    if st.button('🔒 Set Lock Time'):
+        tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})  # 🔐
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+        st.success(f"⌛ Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+        st.balloons()  # 🎈🎈
 
-    # Withdraw
-    withdraw_amount = st.slider('Select withdrawal amount:', min_value=0.0, max_value=100.0, step=0.1)
-    if st.button('Withdraw'):
-        tx_hash = contract.functions.withdraw(web3.toWei(withdraw_amount, 'ether')).transact({'from': owner})
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
-        st.balloons()
-st.warning("Please be aware that withdrawal transactions may be subject to fees.")
+    # 💵 Withdraw
+    withdraw_amount = st.slider('💰 Select withdrawal amount:', min_value=0.0, max_value=100.0, step=0.1)  # 🎚️
+    if st.button('💵 Withdraw'):
+        tx_hash = contract.functions.withdraw(web3.toWei(withdraw_amount, 'ether')).transact({'from': owner})  # 📤
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+        st.success(f"🏧 Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")  # 🥳
+        st.balloons()  # 🎈🎈
 
-# Deadman Switch
-use_deadman_switch = st.checkbox('Activate Deadman Switch')
+# ⚠️ Withdrawal Warning
+st.warning("⚠️ Please be aware that withdrawal transactions may be subject to fees.")  # 💸
+
+# 💀 Deadman Switch
+use_deadman_switch = st.checkbox('💀 Activate Deadman Switch')  # ☑️
 if use_deadman_switch:
-    new_owner = st.text_input("Enter new owner address")
-    if Web3.isAddress(new_owner):  # Check if the address is valid
-        tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")
-        st.balloons()
+    new_owner = st.text_input("🔄 Enter new owner address")  # 🔄
+    if Web3.isAddress(new_owner):  # ✅
+        tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})  # 💀
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)  # 🧾
+        st.success(f"🔄 Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")  # 🎉
+        st.balloons()  # 🎈🎈
     else:
-        st.error("The address entered is not valid. Please enter a valid Ethereum address.")
+        st.error("❌ The address entered is not valid. Please enter a valid Ethereum address.")  # 🚫
