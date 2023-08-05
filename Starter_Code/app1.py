@@ -252,7 +252,7 @@ if owner == web3.eth.accounts[0]:
     st.header('Welcome Owner')
 
     # Deposit
-    deposit_amount = st.slider('Select deposit amount:', min_value=0.0, max_value=10.0, step=0.1)
+    deposit_amount = st.slider('Select deposit amount:', min_value=0.0, max_value=100.0, step=0.1)
     deposit_message = st.text_input('Enter a message for the deposit:')
     if st.button('Deposit'):
         tx_hash = contract.functions.depositWithMessage(deposit_message).transact({'from': owner, 'value': web3.toWei(deposit_amount, 'ether')})
@@ -286,7 +286,7 @@ if owner == web3.eth.accounts[0]:
         st.balloons()
 
     # Withdraw
-    withdraw_amount = st.slider('Select withdrawal amount:', min_value=0.0, max_value=10.0, step=0.1)
+    withdraw_amount = st.slider('Select withdrawal amount:', min_value=0.0, max_value=100.0, step=0.1)
     if st.button('Withdraw'):
         tx_hash = contract.functions.withdraw(web3.toWei(withdraw_amount, 'ether')).transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
