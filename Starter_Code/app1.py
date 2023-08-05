@@ -241,12 +241,12 @@ contract_address = '0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1'
 # Creating contract instance
 contract = web3.eth.contract(address=contract_address, abi=ABI)
 
-# st.sidebar.image('Starter_Code/sidebar.png')  # Add this line to display your logo in the sidebar
+st.sidebar.image('sidebar.png')  # Add this line to display your logo in the sidebar
 # 🎈🖼️ Streamlit App
 st.title('⏳ TimeLock Wallet')  # 🏦
 
 # 🕵️‍♂️ Contract Owner
-owner = st.sidebar.text_input("👤 Owner Unique Address", value="0x-YourAddress")  # 🔑
+owner = st.sidebar.text_input("👤 OWNER WALLET ADDRESS", value="0xYourAddress")  # 🔑
 
 # Owner's Panel
 if owner == web3.eth.accounts[0]:
