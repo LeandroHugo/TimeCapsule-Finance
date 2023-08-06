@@ -209,7 +209,62 @@ def main():
         st.title("Streamlit Elements Demo")
         streamlit_elements_demo()
 
+def images_api_guide():
+    """
+    Display the Images API guide with interactive widgets.
+    """
+    st.title("Images API Guide")
+    
+    st.header("Introduction")
+    st.write("""
+    The Images API provides three methods for interacting with images:
+    - Creating images from scratch based on a text prompt
+    - Creating edits of an existing image based on a new text prompt
+    - Creating variations of an existing image
+    This guide covers the basics of using these three API endpoints with useful code samples.
+    To see them in action, check out our DALL·E preview app.
+    """)
 
+    st.header("Usage")
+
+    # Generations
+    st.subheader("Generations")
+    st.write("""
+    The image generations endpoint allows you to create an original image given a text prompt.
+    Generated images can have a size of 256x256, 512x512, or 1024x1024 pixels.
+    Smaller sizes are faster to generate. You can request 1-10 images at a time using the n parameter.
+    """)
+
+    prompt = st.text_input("Enter a prompt for the image:", "a white siamese cat")
+    n_images = st.slider("Select number of images:", 1, 10, 1)
+    size = st.radio("Choose image size:", ["256x256", "512x512", "1024x1024"])
+
+    if st.button("Generate Image"):
+        # For demonstration purposes, we'll use a placeholder URL
+        image_url = "https://placekitten.com/1024/1024"
+        st.image(image_url, caption=prompt, use_column_width=True)
+
+    # You can follow a similar approach for Edits and Variations sections.
+    # ... [Continue with the rest of the guide]
+
+def main():
+    st.sidebar.title("Navigation")
+    selection = st.sidebar.radio("Choose Page", ["Home", "Photo Upload Widget", "Streamlit Elements Demo", "Images API Guide"])
+
+    if selection == "Home":
+        st.title("Home Page")
+        st.write("Welcome to the home page of this Streamlit app!")
+
+    elif selection == "Photo Upload Widget":
+        st.title("Photo Upload Widget")
+        photo_upload_widget()
+
+    elif selection == "Streamlit Elements Demo":
+        st.title("Streamlit Elements Demo")
+        streamlit_elements_demo()
+
+    elif selection == "Images API Guide":
+        images_api_guide()
 
 if __name__ == "__main__":
     main()
