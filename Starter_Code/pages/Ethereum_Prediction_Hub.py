@@ -127,7 +127,7 @@ def main():
     selection = st.sidebar.radio("Choose Page", pages)
 
     if selection == "Home":
-        st.title("Home Page")
+        st.title("Ξ Ethereum Prediction Ξ")
         import datetime
         current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         st.write(f"Current Date and Time: {current_time}")

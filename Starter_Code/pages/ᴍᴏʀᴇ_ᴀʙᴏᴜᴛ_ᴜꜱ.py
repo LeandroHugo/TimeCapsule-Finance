@@ -41,24 +41,42 @@ def run():
     "I feel much safer with my digital assets now. The intuitive UI and the TimeLock feature make it my go-to wallet." - Samantha
     """)
 
-    # FAQ Section
-    if st.button("Frequently Asked Questions"):
-        st.write("""
-        **1. How does the TimeLock feature work?**
-        The TimeLock feature allows you to lock your assets until a specified time has passed. 
+# Basic FAQ bot logic using predefined Q&A
+def faq_bot_response(user_input):
+    faq_responses = {
+        "timelock": "The TimeLock feature allows you to lock your assets until a specified time has passed.",
+        "deadman switch": "The Deadman Switch is a feature that will transfer your assets to a designated address if you're inactive for a set period.",
+        "deposit funds": "Navigate to the User Dashboard and use the deposit function."
+    }
+    for key, value in faq_responses.items():
+        if key in user_input.lower():
+            return value
+    return "Sorry, I don't have an answer for that. Please try rephrasing your question or ask another one."
 
-        **2. What is the Deadman Switch?**
-        The Deadman Switch is a feature that will transfer your assets to a designated address if you're inactive for a set period.
+# FAQ Chatbot Section
+st.header("FAQ Chatbot")
+user_input = st.text_input("Ask me about TimeLock, Deadman Switch, and more!")
+if st.button("Ask"):
+    response = faq_bot_response(user_input)
+    st.write(f"Answer: {response}")
 
-        **3. How can I deposit funds into the wallet?**
-        Navigate to the User Dashboard and use the deposit function.
-        """)
+# Pre-defined FAQ Section
+st.header("Frequently Asked Questions")
+faq_dict = {
+    "How does the TimeLock feature work?": "The TimeLock feature allows you to lock your assets until a specified time has passed.",
+    "What is the Deadman Switch?": "The Deadman Switch is a feature that will transfer your assets to a designated address if you're inactive for a set period.",
+    "How can I deposit funds into the wallet?": "Navigate to the User Dashboard and use the deposit function."
+}
+
+selected_question = st.selectbox("Choose a question:", list(faq_dict.keys()))
+st.write(f"**{selected_question}**")
+st.write(faq_dict[selected_question])
 
     # Footer
-    st.write("---")
-    st.write("""
+st.write("---")
+st.write("""
     [Terms of Service](#) | [Privacy Policy](#) | [Support](#)
-    """)  # Add actual links in place of '#' 
+    """)  # Add actual links in place of '#'
 
 if __name__ == '__main__':
     run()
