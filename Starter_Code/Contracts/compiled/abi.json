@@ -35,6 +35,19 @@
 		"inputs": [
 			{
 				"indexed": false,
+				"internalType": "uint256",
+				"name": "newLockTime",
+				"type": "uint256"
+			}
+		],
+		"name": "LockTimeUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
 				"internalType": "address",
 				"name": "to",
 				"type": "address"
@@ -77,7 +90,13 @@
 	},
 	{
 		"constant": false,
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
 		"name": "deadmanSwitch",
 		"outputs": [],
 		"payable": false,

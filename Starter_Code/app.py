@@ -8,10 +8,179 @@ web3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 
 # This should be the contract ABI (Application Binary Interface), which you get after compiling your smart contract
 # For simplicity, let's use an empty list
-ABI = []
+ABI = [
+	{
+		"inputs": [],
+		"payable": False,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"name": "Deposited",
+		"type": "event"
+	},
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "newLockTime",
+				"type": "uint256"
+			}
+		],
+		"name": "LockTimeUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": False,
+		"inputs": [
+			{
+				"indexed": False,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"indexed": False,
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"name": "Withdrawn",
+		"type": "event"
+	},
+	{
+		"payable": True,
+		"stateMutability": "payable",
+		"type": "fallback"
+	},
+	{
+		"constant": True,
+		"inputs": [],
+		"name": "balance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": False,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": False,
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "deadmanSwitch",
+		"outputs": [],
+		"payable": False,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": False,
+		"inputs": [],
+		"name": "deposit",
+		"outputs": [],
+		"payable": True,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": True,
+		"inputs": [],
+		"name": "lockTime",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": False,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": True,
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address payable",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": False,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": False,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_lockTime",
+				"type": "uint256"
+			}
+		],
+		"name": "setLockTime",
+		"outputs": [],
+		"payable": False,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": False,
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"payable": False,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+]
+
 
 # The contract address that you get after deploying your smart contract
-contract_address = '0x79f71dCc8953e9c8c02831DB73E0af686E158eb8'
+contract_address = '0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1'
 
 # Creating contract instance
 contract = web3.eth.contract(address=contract_address, abi=ABI)
@@ -27,22 +196,35 @@ if owner == web3.eth.accounts[0]:
     st.header('Welcome Owner')
 
     # Deposit
+    deposit_amount = st.text_input('Enter deposit amount:')
     if st.button('Deposit'):
-        tx_hash = contract.functions.deposit().transact({'from': owner, 'value': web3.toWei(1, 'ether')})
+        tx_hash = contract.functions.deposit().transact({'from': owner, 'value': web3.toWei(float(deposit_amount), 'ether')})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.write(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.success(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
 
     # Set lock time
     if st.button('Set Lock Time'):
-        lock_time = st.number_input('Enter lock time in seconds')
-        tx_hash = contract.functions.setLockTime(lock_time).transact({'from': owner})
+        lock_time = st.number_input('Enter lock time in seconds', step=1)
+        tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.write(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.success(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
 
     # Withdraw
     if st.button('Withdraw'):
         tx_hash = contract.functions.withdraw().transact({'from': owner})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.write(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
-else:
-    st.write("You are not the owner of this contract.")
+        st.success(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
+
+# Deadman Switch
+if st.button('Activate Deadman Switch'):
+    new_owner = st.text_input("Enter new owner address")
+    if Web3.isAddress(new_owner):  # Check if the address is valid
+        tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})
+        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
+        st.success(f"Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.balloons()
+    else:
+        st.error("The address entered is not valid. Please enter a valid Ethereum address.")
