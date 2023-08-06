@@ -5,6 +5,7 @@ import replicate
 import os
 import requests
 import openai  # Importing openai module
+from PIL import Image
 
 # Basic chatbot logic using predefined Q&A
 def basic_bot_response(user_input):
@@ -260,21 +261,64 @@ def generate_image(prompt, n=1, size="1024x1024"):
     return response['data'][0]['url']
 
 # Image Edits
-def edit_image(image_path, mask_path, prompt, n=1, size="1024x1024"):
-    with open(image_path, "rb") as image, open(mask_path, "rb") as mask:
-        response = openai.Image.create_edit(image=image, mask=mask, prompt=prompt, n=n, size=size)
+def edit_image(image_file, mask_file, prompt, n=1, size="1024x1024"):
+    # Assuming openai.Image.create_edit is the correct method to edit images
+    response = openai.Image.create_edit(
+        image=image_file,  # directly using the UploadedFile object
+        mask=mask_file,    # directly using the UploadedFile object
+        prompt=prompt,
+        n=n,
+        size=size
+    )
+    return response['data'][0]['url']
+
+# Image Generation
+def generate_image(prompt, n=1, size="1024x1024"):
+    response = openai.Image.create(prompt=prompt, n=n, size=size)
+    return response['data'][0]['url']
+
+# Image Edits
+def edit_image(image_file, mask_file, prompt, n=1, size="1024x1024"):
+    # Convert the image and mask to a supported format (e.g., RGBA)
+    image = Image.open(image_file).convert("RGBA")
+    mask = Image.open(mask_file).convert("RGBA")
+
+    # Resize the mask to match the image dimensions
+    mask = mask.resize(image.size)
+
+    # Save the converted images to temporary files
+    image_path_temp = "/tmp/image_temp.png"
+    mask_path_temp = "/tmp/mask_temp.png"
+    image.save(image_path_temp)
+    mask.save(mask_path_temp)
+
+    with open(image_path_temp, "rb") as image, open(mask_path_temp, "rb") as mask:
+        # Assuming openai.Image.create_edit is the correct method to edit images
+        response = openai.Image.create_edit(
+            image=image,
+            mask=mask,
+            prompt=prompt,
+            n=n,
+            size=size
+        )
     return response['data'][0]['url']
 
 # Image Variations
-def create_variation(image_path, n=1, size="1024x1024"):
-    with open(image_path, "rb") as image:
+def create_variation(image_file, n=1, size="1024x1024"):
+    # Convert the uploaded file to a supported format (e.g., RGBA)
+    image = Image.open(image_file).convert("RGBA")
+
+    # Save the converted image to a temporary file
+    image_path_temp = "/tmp/image_variation_temp.png"
+    image.save(image_path_temp)
+
+    with open(image_path_temp, "rb") as image:
         response = openai.Image.create_variation(image=image, n=n, size=size)
     return response['data'][0]['url']
 
 # Streamlit UI
 st.title("DALL·E-2 Image Generator")
 
-# Menu for different functionalities
 option = st.sidebar.selectbox("Choose an option:", ["Generate Image", "Edit Image", "Create Variation"])
 
 if option == "Generate Image":
@@ -284,11 +328,11 @@ if option == "Generate Image":
         st.image(image_url, caption=prompt, use_column_width=True)
 
 elif option == "Edit Image":
-    image_path = st.file_uploader("Upload an image:", type=["png"])
-    mask_path = st.file_uploader("Upload a mask:", type=["png"])
+    image_file = st.file_uploader("Upload an image:", type=["png"])
+    mask_file = st.file_uploader("Upload a mask:", type=["png"])
     prompt = st.text_input("Enter a prompt for the edited image:", "A sunlit indoor lounge area with a pool containing a flamingo")
     if st.button("Edit"):
-        image_url = edit_image(image_path, mask_path, prompt)
+        image_url = edit_image(image_file, mask_file, prompt)
         st.image(image_url, caption=prompt, use_column_width=True)
 
 elif option == "Create Variation":
@@ -296,15 +340,6 @@ elif option == "Create Variation":
     if st.button("Generate Variation"):
         image_url = create_variation(image_path)
         st.image(image_url, use_column_width=True)
-
-    # You can add more sections for Edits, Variations, etc. following a similar approach.
-
-def main():
-    st.sidebar.title("Navigation")
-    selection = st.sidebar.radio("Choose Page", ["Images API Guide"])
-
-    if selection == "Images API Guide":
-        images_api_guide()
 
 def main():
     st.sidebar.title("Navigation")
