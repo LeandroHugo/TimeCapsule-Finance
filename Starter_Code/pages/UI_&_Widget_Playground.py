@@ -3,7 +3,8 @@ from streamlit_elements import elements, mui, html
 import time
 import replicate
 import os
-import requests  # Required for making the API call
+import requests
+import openai  # Importing openai module
 
 # Basic chatbot logic using predefined Q&A
 def basic_bot_response(user_input):
@@ -219,36 +220,91 @@ def images_api_guide():
     Smaller sizes are faster to generate. You can request 1-10 images at a time using the n parameter.
     """)
 
-    # Interactive Widgets for Generations
+    # Interactive Widgets
     prompt = st.text_input("Enter a prompt for the image:", "a white siamese cat")
     n_images = st.slider("Select number of images:", 1, 10, 1)
     size = st.radio("Choose image size:", ["256x256", "512x512", "1024x1024"])
 
     if st.button("Generate Image"):
-        # Real-world API call to OpenAI API
-        API_ENDPOINT = "https://api.openai.com/v1/chat/completions"  # OpenAI completions endpoint
+        # Setting up the headers for the API call
         headers = {
-            "Authorization": "Bearer YOUR_OPENAI_API_KEY",  # Replace with your OpenAI API key
-            "Content-Type": "application/json",
-            # Uncomment below if you belong to multiple organizations and want to specify one
-            # "OpenAI-Organization": "org-YOUR_ORGANIZATION_ID"
-        }
+    "Authorization": f"Bearer {st.secrets['openai']['api_key']}",
+    "Content-Type": "application/json"
+}
+
+        # API endpoint for chat completions (this is a mock endpoint, replace with the actual endpoint if different)
+        endpoint = "https://api.openai.com/v1/chat/completions"
+
+        # Data payload
         data = {
             "model": "gpt-3.5-turbo",
             "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.7,
-            "n": n_images
+            "temperature": 0.7
         }
-        response = requests.post(API_ENDPOINT, headers=headers, json=data)
 
+        # Making the API call
+        response = requests.post(endpoint, headers=headers, json=data)
         if response.status_code == 200:
-            response_data = response.json()
-            message_content = response_data['choices'][0]['message']['content']
-            st.write(message_content)  # Display the model's response
+            content = response.json()
+            assistant_message = content['choices'][0]['message']['content']
+            st.write(f"Generated Text: {assistant_message}")
         else:
-            st.error(f"Error generating response: {response.text}")
+            st.write(f"Error {response.status_code}: {response.text}")
+
+# Setup
+openai.api_key = st.secrets['openai']['api_key']
+
+# Image Generation
+def generate_image(prompt, n=1, size="1024x1024"):
+    response = openai.Image.create(prompt=prompt, n=n, size=size)
+    return response['data'][0]['url']
+
+# Image Edits
+def edit_image(image_path, mask_path, prompt, n=1, size="1024x1024"):
+    with open(image_path, "rb") as image, open(mask_path, "rb") as mask:
+        response = openai.Image.create_edit(image=image, mask=mask, prompt=prompt, n=n, size=size)
+    return response['data'][0]['url']
+
+# Image Variations
+def create_variation(image_path, n=1, size="1024x1024"):
+    with open(image_path, "rb") as image:
+        response = openai.Image.create_variation(image=image, n=n, size=size)
+    return response['data'][0]['url']
+
+# Streamlit UI
+st.title("DALL·E-2 Image Generator")
+
+# Menu for different functionalities
+option = st.sidebar.selectbox("Choose an option:", ["Generate Image", "Edit Image", "Create Variation"])
+
+if option == "Generate Image":
+    prompt = st.text_input("Enter a prompt for the image:", "a futuristic city skyline")
+    if st.button("Generate"):
+        image_url = generate_image(prompt)
+        st.image(image_url, caption=prompt, use_column_width=True)
+
+elif option == "Edit Image":
+    image_path = st.file_uploader("Upload an image:", type=["png"])
+    mask_path = st.file_uploader("Upload a mask:", type=["png"])
+    prompt = st.text_input("Enter a prompt for the edited image:", "A sunlit indoor lounge area with a pool containing a flamingo")
+    if st.button("Edit"):
+        image_url = edit_image(image_path, mask_path, prompt)
+        st.image(image_url, caption=prompt, use_column_width=True)
+
+elif option == "Create Variation":
+    image_path = st.file_uploader("Upload an image for variation:", type=["png"])
+    if st.button("Generate Variation"):
+        image_url = create_variation(image_path)
+        st.image(image_url, use_column_width=True)
 
     # You can add more sections for Edits, Variations, etc. following a similar approach.
+
+def main():
+    st.sidebar.title("Navigation")
+    selection = st.sidebar.radio("Choose Page", ["Images API Guide"])
+
+    if selection == "Images API Guide":
+        images_api_guide()
 
 def main():
     st.sidebar.title("Navigation")
