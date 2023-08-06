@@ -3,6 +3,7 @@ from streamlit_elements import elements, mui, html
 import time
 import replicate
 import os
+import requests  # Required for making the API call
 
 # Basic chatbot logic using predefined Q&A
 def basic_bot_response(user_input):
@@ -192,29 +193,12 @@ def streamlit_elements_demo():
         mui.Typography(st.session_state.my_text)
         mui.TextField(label="Input some text here", onChange=handle_change)
 
-
-def main():
-    st.sidebar.title("Navigation")
-    selection = st.sidebar.radio("Choose Page", ["Home", "Photo Upload Widget", "Streamlit Elements Demo"])
-
-    if selection == "Home":
-        st.title("Home Page")
-        st.write("Welcome to the home page of this Streamlit app!")
-
-    elif selection == "Photo Upload Widget":
-        st.title("Photo Upload Widget")
-        photo_upload_widget()
-
-    elif selection == "Streamlit Elements Demo":
-        st.title("Streamlit Elements Demo")
-        streamlit_elements_demo()
-
 def images_api_guide():
     """
     Display the Images API guide with interactive widgets.
     """
     st.title("Images API Guide")
-    
+
     st.header("Introduction")
     st.write("""
     The Images API provides three methods for interacting with images:
@@ -235,17 +219,36 @@ def images_api_guide():
     Smaller sizes are faster to generate. You can request 1-10 images at a time using the n parameter.
     """)
 
+    # Interactive Widgets for Generations
     prompt = st.text_input("Enter a prompt for the image:", "a white siamese cat")
     n_images = st.slider("Select number of images:", 1, 10, 1)
     size = st.radio("Choose image size:", ["256x256", "512x512", "1024x1024"])
 
     if st.button("Generate Image"):
-        # For demonstration purposes, we'll use a placeholder URL
-        image_url = "https://placekitten.com/1024/1024"
-        st.image(image_url, caption=prompt, use_column_width=True)
+        # Real-world API call to OpenAI API
+        API_ENDPOINT = "https://api.openai.com/v1/chat/completions"  # OpenAI completions endpoint
+        headers = {
+            "Authorization": "Bearer YOUR_OPENAI_API_KEY",  # Replace with your OpenAI API key
+            "Content-Type": "application/json",
+            # Uncomment below if you belong to multiple organizations and want to specify one
+            # "OpenAI-Organization": "org-YOUR_ORGANIZATION_ID"
+        }
+        data = {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.7,
+            "n": n_images
+        }
+        response = requests.post(API_ENDPOINT, headers=headers, json=data)
 
-    # You can follow a similar approach for Edits and Variations sections.
-    # ... [Continue with the rest of the guide]
+        if response.status_code == 200:
+            response_data = response.json()
+            message_content = response_data['choices'][0]['message']['content']
+            st.write(message_content)  # Display the model's response
+        else:
+            st.error(f"Error generating response: {response.text}")
+
+    # You can add more sections for Edits, Variations, etc. following a similar approach.
 
 def main():
     st.sidebar.title("Navigation")
