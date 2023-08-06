@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import openai
+from openai import ChatCompletion
+
 
 # Ethereum Prediction Model
 def eth_prediction_model():
@@ -99,12 +101,16 @@ def get_llama_response(prompt):
     full_prompt = "You are an expert on Ethereum and cryptocurrencies. " + prompt
 
     # Call the OpenAI Completion API
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=full_prompt,
-        max_tokens=150
-    )
-    response_text = response.choices[0].text.strip()
+    response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[
+        {"role": "system", "content": "You are an expert on Ethereum and cryptocurrencies."},
+        {"role": "user", "content": prompt}
+    ]
+)
+
+    response_text = response['choices'][0]['message']['content'].strip()
+
 
     # Check for code in the response using a more refined method
     code_keywords = ["def", "return", "()", "{}", "[]"]
