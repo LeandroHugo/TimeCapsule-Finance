@@ -272,5 +272,6 @@ a seasoned trader or just starting out, we have something for you here.
         """)
         st.write("Factors influencing Ethereum's price include market demand and external events.")
 
+
 if __name__ == "__main__":
     main()
