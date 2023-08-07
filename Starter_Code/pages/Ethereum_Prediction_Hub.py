@@ -7,13 +7,11 @@ import openai
 from openai import ChatCompletion
 import joblib
 
-# Load the models
-# rf_model_complex = joblib.load("/mnt/data/rf_model_complex-1.pkl")
-rf_model_simple = joblib.load("../eth_rf_model_close.pkl")
 # Ethereum Prediction Model
 def eth_prediction_model():
     # Placeholder for your Ethereum prediction model
     return np.random.randint(2000, 4000)
+
 # Ethereum Graph
 def plot_eth_graph():
     df = pd.DataFrame({
@@ -27,6 +25,7 @@ def plot_eth_graph():
     ax.set_ylabel('Price')
     ax.grid(True)
     st.pyplot(fig)
+
 # Generate mock Ethereum data for advanced features
 def generate_random_data():
     return pd.DataFrame({
@@ -35,6 +34,7 @@ def generate_random_data():
         'Lower_Bound': np.random.randint(1900, 3500, size=(30)),
         'Upper_Bound': np.random.randint(2100, 4100, size=(30))
     })
+
 def dummy_predictor(model, param):
     if model == "Linear Regression":
         return np.random.randint(2100, 2200)
@@ -42,12 +42,6 @@ def dummy_predictor(model, param):
         return np.random.randint(2200, 2300)
     elif model == "Neural Network":
         return np.random.randint(2300, 2400)
-    elif model == "Random Forest (Complex)":
-        # Use the complex model for prediction (assuming it predicts on a single feature)
-        return int(rf_model_complex.predict([[param]])[0])
-    elif model == "Random Forest (Simple)":
-        # Use the simple model for prediction
-        return int(rf_model_simple.predict([[param]])[0])
     return np.random.randint(2000, 2500)
 
 def get_llama_response(prompt):
