@@ -298,7 +298,7 @@ st.sidebar.image('sidebar.png')  # Add this line to display your logo in the sid
 st.title('⏳ TimeLock Wallet')  # 🏦
 
 # Display image
-st.image('user1.png', caption='YOU ARE IN CONTROL', use_column_width=True)
+st.image('user1.png', caption='"Unlock the Future with Thereums TIMELOCK WALLET: A Fusion of Security and Innovation, Guided by Helphubs Expertise. Step into a world where your assets are safeguarded by cutting-edge blockchain technology, and your journey is illuminated by the wisdom of Helphub. Explore, secure, and thrive in the digital nexus of tomorrow.', use_column_width=True)
 
 # Sidebar Content 📝
 with st.sidebar:
