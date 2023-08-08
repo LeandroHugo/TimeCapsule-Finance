@@ -6,6 +6,7 @@ import os
 import requests
 import openai  # Importing openai module
 from PIL import Image
+import json
 
 # Basic chatbot logic using predefined Q&A
 def basic_bot_response(user_input):
@@ -31,6 +32,8 @@ st.set_page_config(page_title="🦙💬 Llama 2 Chatbot")
 # Replicate Credentials
 with st.sidebar:
     st.title('🦙💬 Llama 2 Chatbot')
+    # Load the GIF from the 'assets' folder with a specified width
+    st.image("my_gif.gif", width=300)
     if 'REPLICATE_API_TOKEN' in st.secrets:
         st.success('API key already provided!', icon='✅')
         replicate_api = st.secrets['REPLICATE_API_TOKEN']

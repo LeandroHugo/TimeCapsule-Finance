@@ -5,7 +5,7 @@ import numpy as np
 import plotly.express as px
 import openai
 from openai import ChatCompletion
-
+import joblib
 
 # Ethereum Prediction Model
 def eth_prediction_model():
@@ -271,6 +271,7 @@ a seasoned trader or just starting out, we have something for you here.
         - **Neural Network**: A series of algorithms.
         """)
         st.write("Factors influencing Ethereum's price include market demand and external events.")
+
 
 if __name__ == "__main__":
     main()
