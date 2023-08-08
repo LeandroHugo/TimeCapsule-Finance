@@ -5,7 +5,7 @@ contract TimeLockWallet {
     address public owner;
     address public admin;
     uint public lockTime;
-    
+
     // Deadman Switch variables
     uint public lastActive;
     uint public inactivityPeriod = 31536000; // Default to 1 year (in seconds)
