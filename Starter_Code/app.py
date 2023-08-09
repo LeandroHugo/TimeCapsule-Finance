@@ -10,6 +10,36 @@ web3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 # For simplicity, let's use an empty list
 ABI = [
 	{
+		"constant": False,
+		"inputs": [
+			{
+				"internalType": "address payable",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "deadmanSwitch",
+		"outputs": [],
+		"payable": False,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": False,
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_lockTimeInSeconds",
+				"type": "uint256"
+			}
+		],
+		"name": "depositAndSetLockTime",
+		"outputs": [],
+		"payable": True,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"payable": False,
 		"stateMutability": "nonpayable",
@@ -52,6 +82,15 @@ ABI = [
 		],
 		"name": "LockTimeUpdated",
 		"type": "event"
+	},
+	{
+		"constant": False,
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"payable": False,
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": False,
@@ -99,30 +138,6 @@ ABI = [
 		"type": "function"
 	},
 	{
-		"constant": False,
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "deadmanSwitch",
-		"outputs": [],
-		"payable": False,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": False,
-		"inputs": [],
-		"name": "deposit",
-		"outputs": [],
-		"payable": True,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
 		"constant": True,
 		"inputs": [],
 		"name": "lockTime",
@@ -151,30 +166,6 @@ ABI = [
 		"payable": False,
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"constant": False,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_lockTime",
-				"type": "uint256"
-			}
-		],
-		"name": "setLockTime",
-		"outputs": [],
-		"payable": False,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": False,
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"payable": False,
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ]
 
@@ -195,20 +186,13 @@ owner = st.sidebar.text_input("Owner Address", value="0xYourAddress")
 if owner == web3.eth.accounts[0]:
     st.header('Welcome Owner')
 
-    # Deposit
+    # Deposit and Set Lock Time Simultaneously
     deposit_amount = st.text_input('Enter deposit amount:')
-    if st.button('Deposit'):
-        tx_hash = contract.functions.deposit().transact({'from': owner, 'value': web3.toWei(float(deposit_amount), 'ether')})
+    lock_time = st.number_input('Enter lock time in seconds', step=1)
+    if st.button('Deposit and Set Lock Time'):
+        tx_hash = contract.functions.depositAndSetLockTime(int(lock_time)).transact({'from': owner, 'value': web3.toWei(float(deposit_amount), 'ether')})
         receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Deposit successful. Transaction hash: {receipt['transactionHash'].hex()}")
-        st.balloons()
-
-    # Set lock time
-    if st.button('Set Lock Time'):
-        lock_time = st.number_input('Enter lock time in seconds', step=1)
-        tx_hash = contract.functions.setLockTime(int(lock_time)).transact({'from': owner})
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
+        st.success(f"Deposit successful with lock time set. Transaction hash: {receipt['transactionHash'].hex()}")
         st.balloons()
 
     # Withdraw
@@ -218,13 +202,13 @@ if owner == web3.eth.accounts[0]:
         st.success(f"Withdrawal successful. Transaction hash: {receipt['transactionHash'].hex()}")
         st.balloons()
 
-# Deadman Switch
-if st.button('Activate Deadman Switch'):
-    new_owner = st.text_input("Enter new owner address")
-    if Web3.isAddress(new_owner):  # Check if the address is valid
-        tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})
-        receipt = web3.eth.waitForTransactionReceipt(tx_hash)
-        st.success(f"Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")
-        st.balloons()
-    else:
-        st.error("The address entered is not valid. Please enter a valid Ethereum address.")
+    # Deadman Switch
+    if st.button('Activate Deadman Switch'):
+        new_owner = st.text_input("Enter new owner address")
+        if Web3.isAddress(new_owner):  # Check if the address is valid
+            tx_hash = contract.functions.deadmanSwitch(new_owner).transact({'from': owner})
+            receipt = web3.eth.waitForTransactionReceipt(tx_hash)
+            st.success(f"Deadman Switch activated. New owner is {new_owner}. Transaction hash: {receipt['transactionHash'].hex()}")
+            st.balloons()
+        else:
+            st.error("The address entered is not valid. Please enter a valid Ethereum address.")
