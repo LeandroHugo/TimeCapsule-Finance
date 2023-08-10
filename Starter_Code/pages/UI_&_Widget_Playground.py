@@ -72,11 +72,32 @@ def generate_llama2_response(prompt_input):
                                 "temperature": 0.1, "top_p": 0.9, "max_length": 512, "repetition_penalty": 1})
     return output
 
-# User-provided prompt
 if prompt := st.chat_input(disabled=not replicate_api):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.write(prompt)
+
+    # Generate a new text response if the last message is not from the assistant
+    if st.session_state.messages[-1]["role"] != "assistant":
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking..."):
+                response = generate_llama2_response(prompt)
+                placeholder = st.empty()
+                full_response = ''
+                for item in response:
+                    full_response += item
+                    placeholder.markdown(full_response)
+                placeholder.markdown(full_response)
+        message = {"role": "assistant", "content": full_response}
+        st.session_state.messages.append(message)
+
+    # Additional code to check for image-based queries
+    # For simplicity, if the user uses the word "image of" in their query, we generate an image
+    if "image of" in prompt:
+        image_description = prompt.replace("image of", "").strip()
+        image_url = generate_image(image_description)
+        st.image(image_url, caption=image_description, use_column_width=True)
+
 
 # Generate a new response if last message is not from assistant
 if st.session_state.messages[-1]["role"] != "assistant":
@@ -214,46 +235,58 @@ def images_api_guide():
     To see them in action, check out our DALL·E preview app.
     """)
 
-    st.header("Usage")
-
-    # Generations
-    st.subheader("Generations")
+    st.header("Advanced Usage & Tips")
     st.write("""
-    The image generations endpoint allows you to create an original image given a text prompt.
-    Generated images can have a size of 256x256, 512x512, or 1024x1024 pixels.
-    Smaller sizes are faster to generate. You can request 1-10 images at a time using the n parameter.
-    """)
+Here are some advanced features and best practices to make the most out of the Text Image Prompt Generator:
 
-    # Interactive Widgets
-    prompt = st.text_input("Enter a prompt for the image:", "a white siamese cat")
-    n_images = st.slider("Select number of images:", 1, 10, 1)
-    size = st.radio("Choose image size:", ["256x256", "512x512", "1024x1024"])
+- **Adaptive Prompting**: Our application harnesses the power of GPT-3.5 Turbo, designed to adapt and improve based on your inputs.
+- **Exploratory Mode**: Toggle on for unexpected and creative results, perfect for brainstorming and concept development.
+- **Session Memory**: Feel free to refine and iterate upon previous prompts within a single session for a more refined output.
+- **Safety First**: Our generator has built-in content filters. However, always review prompts especially if they'll be used in public or professional contexts.
+- **Seamless Integration**: Use our generated prompts directly with image generators like DALL·E for an end-to-end creative experience.
+- **Feedback Loop**: Your feedback helps improve our model. Found an intriguing prompt? Let us know!
+- **Performance Tips**: For rapid responses, generate fewer prompts or opt for a smaller model size when possible.
+""")
 
-    if st.button("Generate Image"):
-        # Setting up the headers for the API call
-        headers = {
-    "Authorization": f"Bearer {st.secrets['openai']['api_key']}",
-    "Content-Type": "application/json"
-}
+# Generations
+st.subheader("Text Image Prompt Generator")
+st.write("""
+The text image prompt generator endpoint allows you to create a textual prompt for an image based on your input.
+The result will be a descriptive text that can be used to generate images.
+For instance, you can provide a broad theme, and the generator will give you a more detailed description.
+""")
 
-        # API endpoint for chat completions (this is a mock endpoint, replace with the actual endpoint if different)
-        endpoint = "https://api.openai.com/v1/chat/completions"
+# Interactive Widgets
+input_prompt = st.text_input("Enter a broad theme or idea:", "cat")
+n_prompts = st.slider("Select number of prompts:", 1, 10, 1)
 
-        # Data payload
-        data = {
-            "model": "gpt-3.5-turbo",
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.7
-        }
+if st.button("Generate Prompt"):
+    # Setting up the headers for the API call
+    headers = {
+        "Authorization": f"Bearer {st.secrets['openai']['api_key']}",
+        "Content-Type": "application/json"
+    }
 
-        # Making the API call
-        response = requests.post(endpoint, headers=headers, json=data)
-        if response.status_code == 200:
-            content = response.json()
-            assistant_message = content['choices'][0]['message']['content']
-            st.write(f"Generated Text: {assistant_message}")
-        else:
-            st.write(f"Error {response.status_code}: {response.text}")
+    # API endpoint for chat completions (this is a mock endpoint, replace with the actual endpoint if different)
+    endpoint = "https://api.openai.com/v1/chat/completions"
+
+    # Data payload
+    data = {
+        "model": "gpt-3.5-turbo",
+        "messages": [{"role": "user", "content": f"Describe an interesting image based on the theme: {input_prompt}"}],
+        "temperature": 0.7,
+        "max_tokens": 150
+    }
+
+    # Making the API call
+    response = requests.post(endpoint, headers=headers, json=data)
+    if response.status_code == 200:
+        content = response.json()
+        assistant_message = content['choices'][0]['message']['content']
+        st.write(f"Generated Prompt: {assistant_message}")
+    else:
+        st.write(f"Error {response.status_code}: {response.text}")
+
 
 # Setup
 openai.api_key = st.secrets['openai']['api_key']
@@ -349,8 +382,25 @@ def main():
     selection = st.sidebar.radio("Choose Page", ["Home", "Photo Upload Widget", "Streamlit Elements Demo", "Images API Guide"])
 
     if selection == "Home":
-        st.title("Home Page")
-        st.write("Welcome to the home page of this Streamlit app!")
+        st.title("UI & Widgets Playground: Home 🏠")
+        st.write("""
+    Greetings, curious explorer! 🌟
+
+    Welcome to the central hub of the UI & Widgets Playground. This space has been meticulously crafted to serve as a nexus between creativity and technology, where you're encouraged to play, learn, and innovate.
+
+    ### Why are you here?
+    - **Discover the Magic**: Understand the intricacies of Streamlit's diverse range of widgets and how they can elevate your app's user experience.
+
+    - **Craft & Customize**: Learn how to tailor Streamlit's UI components to resonate with your brand's identity and aesthetic.
+
+    - **Interactive Learning**: Don't just read about it; interact with it! Each widget here is fully functional, waiting for your input.
+
+    - **Inspiration Awaits**: Whether you're a seasoned developer or just starting, this playground might just spark that next big idea.
+
+    - **Community & Collaboration**: Remember, you're not alone in this journey. Our vibrant community is always here to support, guide, and collaborate.
+
+    Embark on this journey of exploration and creation, and let's craft web applications that are not only functional but also a delight to interact with. Happy experimenting!
+    """)
 
     elif selection == "Photo Upload Widget":
         st.title("Photo Upload Widget")
