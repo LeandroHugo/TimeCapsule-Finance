@@ -1,4 +1,4 @@
-PIL
+Pillow
 datetime
 hashlib
 joblib
