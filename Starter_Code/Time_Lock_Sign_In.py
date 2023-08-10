@@ -2,6 +2,9 @@ import streamlit as st
 from web3 import Web3
 import json
 import joblib
+import replicate
+import os
+from st_on_hover_tabs import on_hover_tabs
 
 # Use Ganache for local blockchain development
 GANACHE_URL = 'HTTP://127.0.0.1:7545'
@@ -293,28 +296,33 @@ contract_address = '0x88Dae24EbC7F8a30c7eBeF7FEF6b4dcCD283e3d1'
 # Creating contract instance
 contract = web3.eth.contract(address=contract_address, abi=ABI)
 
-st.sidebar.image('sidebar.png')  # Add this line to display your logo in the sidebar
-# 🎈🖼️ Streamlit App
-st.title('⏳ TimeLock Wallet')  # 🏦
+# Main function
+def main():
+    st.sidebar.image('sidebar.png')
+    st.title('⏳ TimeLock Wallet')
 
-# Display image
-st.image('user1.png', caption='"Unlock the Future with Thereums TIMELOCK WALLET: A Fusion of Security and Innovation, Guided by Helphubs Expertise. Step into a world where your assets are safeguarded by cutting-edge blockchain technology, and your journey is illuminated by the wisdom of Helphub. Explore, secure, and thrive in the digital nexus of tomorrow.', use_column_width=True)
+    with st.sidebar:
+        tabs = on_hover_tabs(tabName=['Home', 'Admin', 'User', 'Chatbot'],
+                            iconName=['home', 'admin', 'user', 'chat'],
+                            default_choice=0)
 
-# Sidebar Content 📝
-with st.sidebar:
-    st.header("🔧 Controls")
-    st.write("Use the controls below to interact with the contract.")
+    if tabs == 'Home':
+        home_section()
+    elif tabs == 'Admin':
+        admin_panel()
+    elif tabs == 'User':
+        user_panel()
+    elif tabs == 'Chatbot':
+        chatbot_section()
 
-    # 🕵️‍♂️ Contract Owner
-    owner = st.text_input("👤 OWNER WALLET ADDRESS", value="0x-YourAddress")  # 🔑
+    st.warning("⚠️ Please be aware that withdrawal transactions may be subject to fees.")
 
-    # User Role
-    user_role = st.selectbox('👥 Role', ['Admin', 'User'])  # 🧑‍💼
+def home_section():
+    st.image('user1.png', caption='"Unlock the Future with Thereums TIMELOCK WALLET: A Fusion of Security and Innovation...', use_column_width=True)
 
-# 🧑‍💼 Admin Panel
-if user_role == 'Admin' and owner == web3.eth.accounts[0]:
-    st.title('👋 Welcome Admin to the Time Capsule Control Center!')  # 🎈
-    st.header(' Admin Panel')  # 🧑‍💼
+
+def admin_panel():
+    st.header('Admin Panel')
     st.markdown("""
     As an Admin, you have special privileges and responsibilities. You can set lock times, assign new admins, 
     and manage other important aspects of the TimeLock Wallet. Remember, with great power comes great responsibility. 
@@ -358,7 +366,7 @@ if user_role == 'Admin' and owner == web3.eth.accounts[0]:
     # Other admin operations here
 
 # 👥 User's Panel
-elif user_role == 'User':
+def user_panel():
     st.header('👋 Welcome User')
     st.markdown("""
 TimeLock Wallet is a secure and innovative solution for storing and managing your cryptocurrency assets. 
@@ -412,20 +420,18 @@ Looking forward to seeing you again soon!
 st.warning("⚠️ Please be aware that withdrawal transactions may be subject to fees.")  # 💸
 
 
-import streamlit as st
-import replicate
-import os
 
 # App title and sidebar setup
+def chatbot_section():
+    st.sidebar.title('🦙💬 Llama 2 Chatbot')
+    st.sidebar.markdown('📖 Learn how to build this app in this [blog](https://blog.streamlit.io/how-to-build-a-llama-2-chatbot/)!')
 
-st.sidebar.title('🦙💬 Llama 2 Chatbot')
-st.sidebar.markdown('📖 Learn how to build this app in this [blog](https://blog.streamlit.io/how-to-build-a-llama-2-chatbot/)!')
+    # Replicate Credentials
+    replicate_api = st.secrets.get('REPLICATE_API_TOKEN', '')
+    if not replicate_api:
+        replicate_api = st.sidebar.text_input('Enter Replicate API token:', type='password')
+    os.environ['REPLICATE_API_TOKEN'] = replicate_api
 
-# Replicate Credentials
-replicate_api = st.secrets.get('REPLICATE_API_TOKEN', '')
-if not replicate_api:
-    replicate_api = st.sidebar.text_input('Enter Replicate API token:', type='password')
-os.environ['REPLICATE_API_TOKEN'] = replicate_api
 
 # Predefined Questions/FAQ
 faq_questions = [
@@ -466,6 +472,7 @@ if selected_question:
 if st.sidebar.button('Clear Chat History'):
     st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
 
+if __name__ == "__main__":
+    main()
 # Main content area remains unchanged for your other app functionalities
 st.write("Main content area for your app...")
-
