@@ -1,7 +1,6 @@
 Pillow
 datetime
 joblib
-json
 matplotlib
 numpy
 openai
