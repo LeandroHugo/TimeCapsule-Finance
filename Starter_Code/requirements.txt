@@ -11,3 +11,4 @@ requests
 streamlit
 streamlit_elements
 web3
+st_on_hover_tabs
