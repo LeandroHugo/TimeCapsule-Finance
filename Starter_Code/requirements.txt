@@ -8,7 +8,6 @@ pandas
 plotly
 replicate
 requests
-st_on_hover_tabs
 streamlit
 streamlit_elements
 time
