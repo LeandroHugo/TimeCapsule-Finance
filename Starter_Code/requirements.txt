@@ -4,7 +4,6 @@ joblib
 matplotlib
 numpy
 openai
-os
 pandas
 plotly
 replicate
