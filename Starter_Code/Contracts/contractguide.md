@@ -1,28 +1,29 @@
-# Time Lock Wallet in Solidity
+# TimeLockWallet in Solidity
 
-In this guide, we will create a simple time lock wallet in Solidity. This wallet will allow deposits at any time but restricts withdrawals until a specified time has passed.
+In this guide, we delve into the construction of a basic time lock wallet using Solidity. This wallet is designed to permit deposits at any given moment but sets constraints on withdrawals based on a predetermined time frame.
 
 ## Prerequisites
 
-- Basic understanding of Solidity and smart contracts
-- Ethereum development environment setup (e.g., Remix IDE)
+- An introductory knowledge of Solidity and smart contracts.
+- An environment set up for Ethereum development (for instance, Remix IDE).
 
-## Step 1: Define the Contract and Variables
+## Step 1: Initiate the Contract and Variables
 
-Start by defining the contract and the variables we will need.
+Kick off by laying down the contract and listing out the variables that will be required.
 
 ```solidity
 pragma solidity ^0.5.0;
 
 contract TimeLockWallet {
     address payable public owner;
+    uint public balance;
     uint public lockTime;
 }
 ```
 
-## Step 2: Define the Constructor
+## Step 2: Set Up the Constructor
 
-The constructor will set the owner of the contract to the address that deploys it.
+The constructor function is designed to assign the contract's owner to the address that initiates it.
 
 ```solidity
 constructor() public {
@@ -30,50 +31,60 @@ constructor() public {
 }
 ```
 
-## Step 3: Define the Deposit Function
+## Step 3: Structure the Deposit Functions
 
-The deposit function will allow anyone to deposit funds into the contract. It checks that the value sent with the transaction is greater than zero.
+We'll construct two deposit functions. The primary deposit function permits any user to place funds into the wallet. It ensures the transaction value is positive. The secondary one, `depositAndSetLockTime`, sets the `lockTime` during the initial deposit.
 
 ```solidity
 function deposit() public payable {
     require(msg.value > 0, "Must send some ether");
+    balance += msg.value;
+}
+
+function depositAndSetLockTime(uint _lockTimeInSeconds) public payable {
+    require(msg.value > 0, "Must send some ether");
+    balance += msg.value;
+
+    if (balance == msg.value) { 
+        lockTime = now + _lockTimeInSeconds;
+    }
 }
 ```
 
-## Step 4: Define the Set Lock Time Function
+## Step 4: Draft the Withdraw Function
 
-The `setLockTime` function allows the owner to set the lock time of the contract. This function can only be called when the contract is empty to prevent funds from being locked indefinitely.
-
-```solidity
-function setLockTime(uint _lockTime) public {
-    require(address(this).balance == 0, "Wallet must be empty to set the lock time");
-    lockTime = _lockTime;
-}
-```
-
-## Step 5: Define the Withdraw Function
-
-The `withdraw` function allows the owner to withdraw funds from the contract. This function checks whether the current time is later than the lock time before allowing the withdrawal.
+The `withdraw` function enables the owner to retrieve funds from the contract. It verifies if the current time surpasses the `lockTime` before authorizing the withdrawal.
 
 ```solidity
 function withdraw() public {
     require(msg.sender == owner, "Only the owner can withdraw");
-    require(now > lockTime, "Wallet is locked");
+    require(now >= lockTime, "Wallet is locked");
 
-    uint amount = address(this).balance;
-    (bool success, ) = owner.call.value(amount)("");
-    require(success, "Transfer failed.");
+    uint amount = balance;
+    balance = 0;
+    owner.transfer(amount);
 }
 ```
 
-## Step 6: Define the Fallback Function
+## Step 5: Create the Deadman Switch
 
-The fallback function will call the `deposit` function whenever the contract receives ether.
+The `deadmanSwitch` is a function that acts as a safety protocol, letting the existing owner transfer ownership to another address in cases of emergencies.
+
+```solidity
+function deadmanSwitch(address payable newOwner) public {
+    require(msg.sender == owner, "Only the owner can use the deadman switch");
+    owner = newOwner;
+}
+```
+
+## Step 6: Design the Fallback Function
+
+The fallback function is structured to invoke the `deposit` function whenever the contract receives ether.
 
 ```solidity
 function() external payable {
-    deposit();
+    depositAndSetLockTime(0);
 }
 ```
 
-And that's it! You have now created a simple time lock wallet in Solidity. This wallet allows deposits at any time but restricts withdrawals until a specified time has passed.
+Congratulations! You have now successfully fashioned a rudimentary time lock wallet using Solidity. This wallet is capable of receiving deposits at any point in time but imposes limitations on withdrawals based on a pre-set duration.
